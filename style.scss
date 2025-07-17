@@ -2,7 +2,7 @@ body{
     background-color: rgb(184, 125, 240);
     font-family: 'Raleway', sans-serif;
     color: black;
-    font-size: 0.7rem;
+    font-size: 1rem;
     display: flex;
     justify-content: center;  
     align-items: center;        
@@ -12,7 +12,7 @@ body{
 }
 
 #contenido {
-    font-size: 0.7rem;
+    font-size: 1rem;
     .lista{
         background-color: #b58fea;
         list-style-position: inside;
@@ -33,7 +33,7 @@ body{
     font-size: 0.8rem;
     font-weight: bold;
 }
-button:hover {
+button:hover, #enviar:hover, #borrar-datos:hover {
         background-color: rgb(80, 4, 131);
         color: white;
     }
@@ -44,7 +44,7 @@ p {
 }
 
 #enviar{
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: bold;
 }
 

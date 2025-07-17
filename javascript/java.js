@@ -26,9 +26,9 @@ function calcularPrecio() {
     localStorage.setItem("horas", horas);
 
     if (personas > 1){
-        suma= 7000 * cantidadPersonas.value * cantidadHoras.value;
+        suma= 7000 * personas * horas;
     } else{
-        suma = 8000 * cantidadHoras.value;
+        suma = 8000 * horas;
     }
     
     const resultadoAnterior = document.querySelector("#resultado-precio");
@@ -36,7 +36,7 @@ function calcularPrecio() {
 
     const resultado = document.createElement("p");
     resultado.id = "resultado-precio";
-    resultado.innerText = `Total: $${suma}`;
+    resultado.innerText = `$${suma}`;
     total.append(resultado);
 
     localStorage.setItem("total", suma);
@@ -51,8 +51,10 @@ let calcularTotal = document.createElement("button");
 calcularTotal.innerText = "Calcular Total";
 total.append(calcularTotal);
 
+
 calcularTotal.classList.add("form-submit");
 calcularTotal.addEventListener("click", calcularPrecio);
+
 
 const inputTema = document.querySelector("#tema");
 const botonAgregar = document.querySelector("#agregar");
@@ -92,7 +94,8 @@ const curso = document.querySelector("#curso");
 const modalidad = document.querySelector(".modalidad");
 const enviar = document.querySelector("#enviar");
 
-function guardarDatosUsuario() {
+function guardarDatosUsuario(e) {
+    e.preventDefault();
     localStorage.setItem("telefono", telefono.value);
     localStorage.setItem("nombre", nombre.value);
     localStorage.setItem("curso", curso.value);
@@ -100,19 +103,33 @@ function guardarDatosUsuario() {
 }
 
 enviar.addEventListener("click", guardarDatosUsuario);
+enviar.addEventListener("click", calcularPrecio);
 
-const botonPrimaria = document.getElementById("botonPrimaria");
-const botonSecundaria = document.getElementById("botonSecundaria");
+const botonPrimaria = document.createElement("button");
+botonPrimaria.innerText = "Primaria";
+botonPrimaria.id = "botonPrimaria";
+botonPrimaria.classList.add("form-submit");
+
+const botonSecundaria = document.createElement("button");
+botonSecundaria.innerText = "Secundaria";
+botonSecundaria.id = "botonSecundaria";
+botonSecundaria.classList.add("form-submit");
 
 botonPrimaria.addEventListener("click", () => {
-    localStorage.setItem("nivel", "Primaria");
+    localStorage.setItem("Nivel", "Primaria");
 });
 
 botonSecundaria.addEventListener("click", () => {
-    localStorage.setItem("nivel", "Secundaria");
+    localStorage.setItem("Nivel", "Secundaria");
 });
 
-const botonBorrar = document.querySelector("#borrar");
+const botonBorrar = document.createElement("button");
+botonBorrar.innerText = "Borrar Datos";
+botonBorrar.classList.add("form-submit");
+botonBorrar.id = "borrar-datos";
+
+document.body.append(botonBorrar);
+
 botonBorrar.addEventListener("click", () => {
     localStorage.clear();
     location.reload();
