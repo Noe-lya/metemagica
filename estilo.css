@@ -1,0 +1,68 @@
+@charset "UTF-8";
+body {
+  background-color: rgb(184, 125, 240);
+  font-family: "Raleway", sans-serif;
+  color: black;
+  font-size: 0.7rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  text-align: center;
+  flex-direction: column;
+}
+
+#contenido {
+  font-size: 0.7rem;
+}
+#contenido .lista {
+  background-color: #b58fea;
+  list-style-position: inside;
+  padding: 1rem;
+  max-width: 24rem;
+  border-radius: 0.8rem;
+  box-shadow: 10px 10px 10px 0 rgba(0, 0, 0, 0.1);
+  color: black;
+}
+
+.form-submit {
+  padding: 0.5rem;
+  border: 0;
+  border-radius: 0.5rem 0.5rem 0.5rem 0.5rem;
+  cursor: pointer;
+  background-color: rgb(150, 25, 233);
+  transition: background-color 0.1s, color 0.1s;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: rgb(80, 4, 131);
+  color: white;
+}
+
+p {
+  font-size: 1rem;
+  color: black;
+}
+
+#enviar {
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.text, input[type=text], input[type=teléfono], input[type=number] {
+  padding: 0.5rem;
+  border: 2px solid #cfa3ec;
+  border-radius: 0.5rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  font-size: 1rem;
+}
+
+:focus {
+  border-color: #7b2cbf;
+  box-shadow: 0 0 8px rgba(123, 44, 191, 0.6);
+  outline: none;
+}
+
+/*# sourceMappingURL=estilo.css.map */
