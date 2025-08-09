@@ -36,7 +36,7 @@ body {
   font-weight: bold;
 }
 
-button:hover, #enviar:hover, #borrar-datos:hover {
+button:hover, #enviar:hover, #borrar:hover {
   background-color: rgb(80, 4, 131);
   color: white;
 }
@@ -66,3 +66,7 @@ p {
 }
 
 /*# sourceMappingURL=estilo.css.map */
+
+#confirmar-form{
+  font-size: 1rem;
+}

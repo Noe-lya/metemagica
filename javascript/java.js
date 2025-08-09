@@ -1,132 +1,210 @@
+//TITULO
 const titulo = document.querySelector("h1");
 titulo.classList.add("titulo");
 titulo.innerText = "✨ Matemágica ✨";
 
+//VARIABLES
 const parrafos = document.querySelectorAll("p");
 parrafos.forEach((p) => {
     p.classList.add("parrafo");
 });
-
-
 const botones = document.querySelectorAll("button");
 botones.forEach((boton) => {
     boton.classList.add("boton");
 });
-
-
 let cantidadPersonas = document.querySelector("input[name='personas']");
 let cantidadHoras = document.querySelector("input[name='horas']");
 let suma = 0;
-
-function calcularPrecio() {
-    const personas = parseInt(cantidadPersonas.value);
-    const horas = parseInt(cantidadHoras.value);
-
-    localStorage.setItem("personas", personas);
-    localStorage.setItem("horas", horas);
-
-    if (personas > 1){
-        suma= 7000 * personas * horas;
-    } else{
-        suma = 8000 * horas;
-    }
-    
-    const resultadoAnterior = document.querySelector("#resultado-precio");
-    if (resultadoAnterior) resultadoAnterior.remove();
-
-    const resultado = document.createElement("p");
-    resultado.id = "resultado-precio";
-    resultado.innerText = `$${suma}`;
-    total.append(resultado);
-
-    localStorage.setItem("total", suma);
-}
-
+let temas = JSON.parse(localStorage.getItem("temas")) || [];
+const inputTema = document.querySelector("#temas-select");
+const temasLista = document.querySelector("#temas-lista");
+const botonAgregar = document.querySelector("#agregar-tema");
 const total = document.querySelector("#total");
-
+total.classList.add("total");
+const vistaPrevia = document.querySelector("#vista-previa");
 let saltoDeLinea = document.createElement("br");
-total.append(saltoDeLinea);
-
-let calcularTotal = document.createElement("button");
-calcularTotal.innerText = "Calcular Total";
-total.append(calcularTotal);
-
-
-calcularTotal.classList.add("form-submit");
-calcularTotal.addEventListener("click", calcularPrecio);
-
-
-const inputTema = document.querySelector("#tema");
-const botonAgregar = document.querySelector("#agregar");
-const temasLista = document.querySelector("#lista");
-
-botonAgregar.addEventListener("click", agregarTema);
-
-let temas = [];
-
-function agregarTema(e) {
-    e.preventDefault();
-    if (inputTema.value != "") {
-
-        let item = document.createElement("li");
-        item.innerText = inputTema.value;
-        temasLista.append(item);
-
-        temas.push(inputTema.value);
-        localStorage.setItem("temas", JSON.stringify(temas));
-
-        inputTema.value = "";
-        inputTema.focus();
-   
-    } else {
-        const vacio = document.createElement("p");
-        vacio.innerText = "Entrada vacía!";
-        temasLista.append(vacio);
-    }
-
-    botonAgregar.focus();
-    
-}
-
 const nombre = document.querySelector(".nombre");
 const telefono = document.querySelector(".telefono");
 const curso = document.querySelector("#curso");
 const modalidad = document.querySelector(".modalidad");
 const enviar = document.querySelector("#enviar");
+const inputCurso = document.getElementById("curso");
+const inputModalidad = document.getElementById("modalidad");
 
-function guardarDatosUsuario(e) {
+//PREARGA DE DATOS EN LOCALSTORAGE
+nombre.value = localStorage.getItem("nombre") || "";
+telefono.value = localStorage.getItem("telefono") || "";
+curso.value = localStorage.getItem("curso") || "";
+modalidad.value = localStorage.getItem("modalidad") || "";
+cantidadPersonas.value = localStorage.getItem("personas") || "";
+cantidadHoras.value = localStorage.getItem("horas") || "";
+
+//FUNCIONES
+async function mostrarError(mensaje) {
+    await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: mensaje,
+        confirmButtonText: 'Ok'
+    });
+}
+
+async function calcularPrecio() {
+    const personas = parseInt(cantidadPersonas.value);
+    const horas = parseInt(cantidadHoras.value);
+
+    // Validaciones
+    if (isNaN(personas) || personas <= 0) {
+        await mostrarError("Por favor, ingresá una cantidad de personas válida (número mayor a 0).");
+        return;
+    }
+    if (isNaN(horas) || horas <= 0) {
+        await mostrarError("Por favor, ingresá una cantidad de horas válida (número mayor a 0).");
+        return;
+    }
+
+    localStorage.setItem("personas", personas);
+    localStorage.setItem("horas", horas);
+
+    if (personas > 1){
+        suma = 7000 * personas * horas;
+    } else {
+        suma = 8000 * horas;
+    }
+
+    const resultadoAnterior = document.querySelector("#resultado-precio");
+    if (resultadoAnterior) resultadoAnterior.remove();
+
+    const resultado = document.createElement("p");
+    resultado.id = "resultado-precio";
+    total.append(resultado);
+
+    localStorage.setItem("total", suma);
+
+}
+
+function mostrarDatos() {
+
+    const nombreValido = nombre.value.trim();
+    const telefonoValido = telefono.value.trim();
+    const cursoValido = curso.value.trim();
+    const modalidadValida = modalidad.value.trim();
+
+    calcularPrecio();
+
+    const total = localStorage.getItem("total") || 0;
+    const personas = localStorage.getItem("personas") || "Cantidad de personas no ingresada";
+    const horas = localStorage.getItem("horas") || "Cantidad de horas no ingresada";
+    const temas = JSON.parse(localStorage.getItem("temas")) || [];
+
+    const contenedor = document.getElementById("resultado");
+
+    contenedor.innerHTML = `
+        <h2>Datos Ingresados:</h2>
+        <p><strong>Nombre:</strong> ${nombreValido || "No ingresado"}</p>
+        <p><strong>Teléfono:</strong> ${telefonoValido || "No ingresado"}</p>
+        <p><strong>Curso:</strong> ${cursoValido || "No ingresado"}</p>
+        <p><strong>Modalidad:</strong> ${modalidadValida || "No ingresado"}</p>
+        <p><strong>Total:</strong> $${total}</p>
+        <p><strong>Personas:</strong> ${personas}</p>
+        <p><strong>Horas:</strong> ${horas}</p>
+        <p><strong>Temas:</strong> ${temas.length > 0 ? temas.join(", ") : "No se ingresaron temas"}</p>
+    `;
+}
+
+async function agregarTema(e) {
     e.preventDefault();
+    const temasGuardados = inputTema.value.trim();
+
+    if (temasGuardados === "") {
+        await mostrarError("Por favor, ingresa un tema.");
+        return;
+    }
+    if(temas.includes(temasGuardados)) {
+        await mostrarError("El tema ya fue agregado.");
+        return;        
+    }
+
+    let item = document.createElement("li");
+    item.innerText = temasGuardados;
+    temasLista.append(item);
+
+    temas.push(temasGuardados);
+    localStorage.setItem("temas", JSON.stringify(temas));
+
+    inputTema.value = "";
+    botonAgregar.focus();
+}
+
+function validarCampoAsync(valor, validacion) {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve(validacion(valor));
+        }, 300);
+    });
+}
+
+enviar.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    // Validar antes de guardar
+    const nombreValido = nombre.value.trim();
+    const telefonoValido = telefono.value.trim();
+
+    if (nombreValido === "" || /\d/.test(nombreValido)) {
+        await mostrarError("El nombre no puede contener números ni estar vacío.");
+        return;
+    }
+
+    if (telefonoValido === "" || isNaN(telefonoValido) || telefonoValido.length < 6) {
+        await mostrarError("Por favor, completa el número de teléfono correctamente.");
+        return;
+    }
+
+    // Guardar datos y calcular
     localStorage.setItem("telefono", telefono.value);
     localStorage.setItem("nombre", nombre.value);
     localStorage.setItem("curso", curso.value);
     localStorage.setItem("modalidad", modalidad.value);
-}
 
-enviar.addEventListener("click", guardarDatosUsuario);
-enviar.addEventListener("click", calcularPrecio);
+    await calcularPrecio();
+    mostrarDatos();
+});
+botonAgregar.addEventListener("click", agregarTema);
 
-const botonPrimaria = document.createElement("button");
-botonPrimaria.innerText = "Primaria";
-botonPrimaria.id = "botonPrimaria";
-botonPrimaria.classList.add("form-submit");
+//BOTÓN CONFIRMAR
+let confirmarForm = document.createElement("button");
+confirmarForm.type = "button";
+confirmarForm.innerText = "Mostrar Datos";
+confirmarForm.id = "confirmar-form";
+confirmarForm.disabled = true;
 
-const botonSecundaria = document.createElement("button");
-botonSecundaria.innerText = "Secundaria";
-botonSecundaria.id = "botonSecundaria";
-botonSecundaria.classList.add("form-submit");
+total.append(saltoDeLinea);
+total.append(confirmarForm);
 
-botonPrimaria.addEventListener("click", () => {
-    localStorage.setItem("Nivel", "Primaria");
+confirmarForm.classList.add("form-submit");
+confirmarForm.addEventListener("click", () => {
+    mostrarDatos();
+    confirmarForm.innerText = "Actualizar Datos"; 
 });
 
-botonSecundaria.addEventListener("click", () => {
-    localStorage.setItem("Nivel", "Secundaria");
-});
+//DESHABILITAR CAMPOS
+inputTema.disabled = true;
+botonAgregar.disabled = true;
+telefono.disabled = true;
+curso.disabled = true;
+modalidad.disabled = true;
+cantidadPersonas.disabled = true;
+cantidadHoras.disabled = true;
+enviar.disabled = true;
 
+//BOTÓN BORRAR
 const botonBorrar = document.createElement("button");
 botonBorrar.innerText = "Borrar Datos";
 botonBorrar.classList.add("form-submit");
-botonBorrar.id = "borrar-datos";
+botonBorrar.id = "borrar";
+botonBorrar.type = "reset";
+botonBorrar.style.display = "none";
 
 document.body.append(botonBorrar);
 
@@ -134,3 +212,154 @@ botonBorrar.addEventListener("click", () => {
     localStorage.clear();
     location.reload();
 });
+
+//VALIDACIONES CAMPOS
+nombre.addEventListener("input", async () => {
+    const valor = nombre.value.trim();
+    const valido = await validarCampoAsync(valor, v => v !== "" && !/\d/.test(v));
+
+    if (valido) {
+        telefono.disabled = false;
+    } else {
+        telefono.disabled = true;
+        curso.disabled = true;
+        modalidad.disabled = true;
+        cantidadPersonas.disabled = true;
+        cantidadHoras.disabled = true;
+        enviar.disabled = true;
+    }
+});
+
+nombre.addEventListener("blur", async () => {
+    const valor = nombre.value.trim();
+    if (/\d/.test(valor)) {
+        await mostrarError("El nombre no puede contener números.");
+    } else if (valor === "") {
+        await mostrarError("Por favor, ingrese un nombre.");
+    }
+});
+
+
+telefono.addEventListener("input", async () => {
+    const valido = await validarCampoAsync(telefono.value.trim(), v => v !== "" && !isNaN(v) && v.length >= 6);
+    if (valido) {
+        curso.disabled = false;
+    } else {
+        curso.disabled = true;
+        modalidad.disabled = true;
+        cantidadPersonas.disabled = true;
+        cantidadHoras.disabled = true;
+        enviar.disabled = true;
+    }
+});
+
+curso.addEventListener("change", async () => {
+    const valido = await validarCampoAsync(curso.value.trim(), v => v !== "");
+    if (valido) {
+        modalidad.disabled = false;
+    } else {
+        modalidad.disabled = true;
+        cantidadPersonas.disabled = true;
+        cantidadHoras.disabled = true;
+        enviar.disabled = true;
+    }
+});
+
+modalidad.addEventListener("change", async () => {
+    const valido = await validarCampoAsync(modalidad.value.trim(), v => v !== "");
+    if (valido) {
+        cantidadPersonas.disabled = false;
+    } else {
+        cantidadPersonas.disabled = true;
+        cantidadHoras.disabled = true;
+        enviar.disabled = true;
+    }
+});
+
+cantidadPersonas.addEventListener("input", async () => {
+    const valido = await validarCampoAsync(cantidadPersonas.value.trim(), v => !isNaN(v) && v > 0);
+    if (valido) {
+        cantidadHoras.disabled = false;
+    } else {
+        cantidadHoras.disabled = true;
+        enviar.disabled = true;
+    }
+});
+
+cantidadHoras.addEventListener("input", async () => {
+    const val = cantidadHoras.value.trim();
+    const valido = await validarCampoAsync(val, v => !isNaN(v) && Number(v) > 0);
+    
+    enviar.disabled = !valido;
+    inputTema.disabled = !valido;
+    botonAgregar.disabled = !valido;
+    confirmarForm.disabled = !valido;
+    
+    if(valido) {
+        inputTema.focus();
+    }
+});
+
+//FETCH Y ASINCRONÍA
+fetch("curso.json")
+  .then((res) => res.json())
+  .then((data) => {
+    let placeholder = document.createElement("option");
+        placeholder.value = "";
+        placeholder.innerText = "Seleccione un curso";
+        placeholder.disabled = true;
+        placeholder.selected = true;
+        inputCurso.appendChild(placeholder);
+    data.forEach((cursoObj) => {
+      let option = document.createElement("option");
+      option.value = cursoObj.curso;       
+      option.innerText = cursoObj.curso;   
+      inputCurso.appendChild(option);
+    });
+  })
+  .catch((error) => console.error("Error cargando cursos:", error));
+
+fetch("modalidad.json")
+  .then((res) => res.json())
+  .then((data) => {
+    let placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.innerText = "Seleccione una modalidad";
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    inputModalidad.appendChild(placeholder);
+    data.forEach((modalidadObj) => {
+      let option = document.createElement("option");
+      option.value = modalidadObj.modalidad;
+      option.innerText = modalidadObj.modalidad;
+      inputModalidad.appendChild(option);
+    });
+  })
+  .catch((error) => console.error("Error cargando modalidades:", error));
+
+  fetch("temas.json")
+  .then((res) => res.json())
+  .then((data) => {
+    let placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.innerText = "Seleccione un tema";
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    inputTema.appendChild(placeholder);
+
+    data.forEach((tema) => {
+        let option = document.createElement("option");
+        option.value = tema.nombre;
+        option.innerText = tema.nombre;
+        inputTema.appendChild(option);
+    });
+
+  })
+  
+  .catch((error) => console.error("Error cargando temas:", error));
+  
+let ultimoBoton = setInterval(() => {
+    if (cantidadHoras.value.trim() !== "" && !isNaN(cantidadHoras.value) && Number(cantidadHoras.value) > 0) {
+        botonBorrar.style.display = "inline-block";
+    }
+}, 100);

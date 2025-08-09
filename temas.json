@@ -1,0 +1,21 @@
+[
+  { "nombre": "Ecuaciones" },
+  { "nombre": "Inecuaciones" },
+  { "nombre": "Trigonometría" },
+  { "nombre": "Probabilidad y Estadística" },
+  { "nombre": "Sistemas de ecuaciones" },
+  { "nombre": "Álgebra y geometría analítica" },
+  { "nombre": "Matemáticas Discretas" },
+  { "nombre": "Análisis Matemático I" },
+  { "nombre": "Análisis Matemático II" },
+  { "nombre": "Teoría de Números" },
+  { "nombre": "Topología" },
+  { "nombre": "Funciones" },
+  { "nombre": "Graficar" },
+  { "nombre": "Porcentaje" },
+  { "nombre": "Optimización" },
+  { "nombre": "Números Reales" },
+  { "nombre": "Divisibilidad, múltiplos" },
+  { "nombre": "Potenciación, radicación" },
+  { "nombre": "Sistemas de ecuaciones" }
+]

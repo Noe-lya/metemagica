@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="imagenes/Cartel Clases Particulares Refuerzo Aprender Ilustrado Kawaii Colorido Blanco Azul (1).png" width="40px" type="image/x-icon">
+    <link rel="shortcut icon" href="imagenes/calculador.png" width="40px" type="image/x-icon">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
     </style>
@@ -12,6 +12,8 @@
 </head>
 <body>
     <h1>Matemágica</h1>
+    <img src="imagenes/calculador.png" width="50px" alt="">
+    <p>¡Simula los costos de tu clase, gratis!</p>
     <p>¿Cansado de sufrir con los números? ¡Toma una clase con nosotros y aprobá tus exámenes!</p>
 
     <p>Formulario de contacto:</p>
@@ -31,29 +33,18 @@
             <ul class="lista">
                 <h2>Curso</h2>
                     <select class="text" id="curso" name="curso" required>
-                        <option value="primero">1°</option>
-                        <option value="segundo">2°</option>
-                        <option value="tercero">3°</option>
-                        <option value="cuarto">4°</option>
-                        <option value="quinto">5°</option>
-                        <option value="sexto">6°</option>
                     </select>
-                    <select class="text" name="nivel" id="nivel" required>
-                        <option value="Primaria">Primaria</option>
-                        <option value="Secundaria">Secundaria</option>
-                    </select><br><br>
             </ul>
 
             <ul class="lista">
                 <h2>Modalidad</h2>
-                <select class="text modalidad" name="modalidad" required>
-                        <option value="presencial">Presencial</option>
-                        <option value="online">Online</option>
+                <select id="modalidad" class="text modalidad" name="modalidad" required>
                 </select><br><br>
             </ul>
 
             <ul class="lista">
-                <h2>Cantidad de personas</h2>
+                <h2>Cantidad de personas por hora</h2>
+                <p>$8000 x 1 persona/ $7000 x 2 o más personas</p>
                 <input type="number" class="personas text" name="personas" min="1" required ><br><br>
             </ul>
 
@@ -64,21 +55,20 @@
             
             <ul class="lista">
                 <h2>Temas a estudiar</h2>
-                <div class="temas-container">
-                    <input type="text" id="tema" name="tema" >
-                    <button type="button" id="agregar" class="form-submit">Agregar tema</button>
-                    <ul id="lista"></ul>
-                </div>
+                <p>Si el tema que necesitas no está en la lista, cuando nos comuniquemos lo especificaras!</p>
+                <select class="text" id="temas-select">
+                </select>  
+                <button id="agregar-tema" class="text" type="button">Agregar Tema</button>
+                <ul id="temas-lista"></ul>
             </ul>
 
-        <input type="submit" value="Enviar" id="enviar" class="form-submit">
-        
-    </div>
-
     </form>
-        
+    
+    <div id="resultado"></div><br>
+    <div id="total"><div id="vista-previa"></div></div><br>
+    <div id="borrar"></div><br>
 
-    <h3 id="total">Total</h3>
+    <input type="submit" value="Enviar" id="enviar" class="form-submit">
 
     <script src="javascript/java.js"></script>
 </body>
