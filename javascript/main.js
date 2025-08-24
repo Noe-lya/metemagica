@@ -134,13 +134,12 @@ async function agregarTema(e) {
 
     inputTema.value = "";
     botonAgregar.focus();
-}
 
-function validarCampoAsync(valor, validacion) {
-    return new Promise(resolve => {
-        setTimeout(() => {
-            resolve(validacion(valor));
-        }, 300);
+    Swal.fire({
+        icon: "info",
+        title: "Tema agregado",
+        text: "Recordá actualizar los datos para ver el tema en el resumen.",
+        confirmButtonText: "Ok"
     });
 }
 
@@ -151,17 +150,19 @@ enviar.addEventListener("click", async (e) => {
     const nombreValido = nombre.value.trim();
     const telefonoValido = telefono.value.trim();
 
-    if (nombreValido === "" || /\d/.test(nombreValido)) {
-        await mostrarError("El nombre no puede contener números ni estar vacío.");
-        return;
+    const confirmacion = await Swal.fire({
+        title: "¿Deseas enviar los datos?",
+        text: "Podrás revisarlos en la sección de resumen.",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Enviar",
+        cancelButtonText: "Cancelar"
+    });
+
+    if (!confirmacion.isConfirmed) {
+        return; 
     }
 
-    if (telefonoValido === "" || isNaN(telefonoValido) || telefonoValido.length < 6) {
-        await mostrarError("Por favor, completa el número de teléfono correctamente.");
-        return;
-    }
-
-    // Guardar datos y calcular
     localStorage.setItem("telefono", telefono.value);
     localStorage.setItem("nombre", nombre.value);
     localStorage.setItem("curso", curso.value);
@@ -169,6 +170,11 @@ enviar.addEventListener("click", async (e) => {
 
     await calcularPrecio();
     mostrarDatos();
+    Swal.fire({
+        icon: "success",
+        title: "Datos enviados",
+        text: "Tus datos se guardaron correctamente."
+    });
 });
 botonAgregar.addEventListener("click", agregarTema);
 
@@ -214,48 +220,55 @@ botonBorrar.addEventListener("click", () => {
 });
 
 //VALIDACIONES CAMPOS
+
+import { validarNombre, validarTelefono, validarNumero, validarCampoAsync, validarNombreMaxCaracteres, validarTelefonoMinCaracteres} from "./validaciones.js";
+
 nombre.addEventListener("input", async () => {
     const valor = nombre.value.trim();
-    const valido = await validarCampoAsync(valor, v => v !== "" && !/\d/.test(v));
 
-    if (valido) {
-        telefono.disabled = false;
-    } else {
+    if (validarNombreMaxCaracteres(valor)) {
+        Swal.fire({
+            icon: "error",
+            title: "Nombre inválido",
+            text: "El nombre no puede contener números.",
+        });
+
+        nombre.value = "";
         telefono.disabled = true;
         curso.disabled = true;
         modalidad.disabled = true;
         cantidadPersonas.disabled = true;
         cantidadHoras.disabled = true;
         enviar.disabled = true;
+    } else  {
+        telefono.disabled = false;
     }
 });
-
-nombre.addEventListener("blur", async () => {
-    const valor = nombre.value.trim();
-    if (/\d/.test(valor)) {
-        await mostrarError("El nombre no puede contener números.");
-    } else if (valor === "") {
-        await mostrarError("Por favor, ingrese un nombre.");
-    }
-});
-
 
 telefono.addEventListener("input", async () => {
-    const valido = await validarCampoAsync(telefono.value.trim(), v => v !== "" && !isNaN(v) && v.length >= 6);
-    if (valido) {
-        curso.disabled = false;
-    } else {
+    const valor = telefono.value.trim();
+    if (validarTelefonoMinCaracteres(valor)) {
+        Swal.fire({
+            icon: "error",
+            title: "Teléfono inválido",
+            text: "El teléfono no debe contener letras.",
+        });
+
+        telefono.value = "";
         curso.disabled = true;
         modalidad.disabled = true;
         cantidadPersonas.disabled = true;
         cantidadHoras.disabled = true;
         enviar.disabled = true;
+        
+    } else {
+        curso.disabled = false;
     }
 });
 
 curso.addEventListener("change", async () => {
-    const valido = await validarCampoAsync(curso.value.trim(), v => v !== "");
-    if (valido) {
+    const valor = curso.value.trim();
+    if (valor !== "") {
         modalidad.disabled = false;
     } else {
         modalidad.disabled = true;
@@ -301,7 +314,7 @@ cantidadHoras.addEventListener("input", async () => {
 });
 
 //FETCH Y ASINCRONÍA
-fetch("curso.json")
+fetch("data/curso.json")
   .then((res) => res.json())
   .then((data) => {
     let placeholder = document.createElement("option");
@@ -319,7 +332,7 @@ fetch("curso.json")
   })
   .catch((error) => console.error("Error cargando cursos:", error));
 
-fetch("modalidad.json")
+fetch("data/modalidad.json")
   .then((res) => res.json())
   .then((data) => {
     let placeholder = document.createElement("option");
@@ -337,7 +350,7 @@ fetch("modalidad.json")
   })
   .catch((error) => console.error("Error cargando modalidades:", error));
 
-  fetch("temas.json")
+  fetch("data/temas.json")
   .then((res) => res.json())
   .then((data) => {
     let placeholder = document.createElement("option");
